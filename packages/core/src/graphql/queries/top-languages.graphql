@@ -31,4 +31,18 @@ query topLanguages(
       }
     }
   }
+  # user(login) omits private org repos; the PAT owner's own view includes them
+  viewer {
+    login
+    repositories(
+      affiliations: $ownerAffiliations
+      ownerAffiliations: $ownerAffiliations
+      isFork: false
+      first: 100
+    ) {
+      nodes {
+        ...TopLanguagesRepository
+      }
+    }
+  }
 }

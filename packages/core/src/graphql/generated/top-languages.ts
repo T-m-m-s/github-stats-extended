@@ -43,6 +43,20 @@ export type TopLanguagesQuery = {
       } | null> | null;
     };
   } | null;
+  viewer: {
+    login: string;
+    repositories: {
+      nodes: Array<{
+        name: string;
+        languages: {
+          edges: Array<{
+            size: number;
+            node: { color: string | null; name: string };
+          } | null> | null;
+        } | null;
+      } | null> | null;
+    };
+  };
 };
 
 export const TopLanguagesDocument = graphqlDocument<
@@ -52,6 +66,14 @@ export const TopLanguagesDocument = graphqlDocument<
 query topLanguages($login: String!, $ownerAffiliations: [RepositoryAffiliation]) {
   user(login: $login) {
     repositories(ownerAffiliations: $ownerAffiliations, isFork: false, first: 100) {
+      nodes {
+        ...TopLanguagesRepository
+      }
+    }
+  }
+  viewer {
+    login
+    repositories(affiliations: $ownerAffiliations, ownerAffiliations: $ownerAffiliations, isFork: false, first: 100) {
       nodes {
         ...TopLanguagesRepository
       }

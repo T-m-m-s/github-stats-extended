@@ -81,7 +81,11 @@ const fetchTopLanguages = async (
   });
 
   // filter out repositories to be hidden
-  const repoNodes = (res.data.data.user?.repositories.nodes ?? []).filter(
+  const { user, viewer } = res.data.data;
+  // the PAT owner's own view includes private org repos that user(login) omits
+  const source =
+    viewer?.login.toLowerCase() === username.toLowerCase() ? viewer : user;
+  const repoNodes = (source?.repositories.nodes ?? []).filter(
     (node): node is TopLanguagesRepositoryFragment =>
       !!node && !repoToHide[node.name],
   );
